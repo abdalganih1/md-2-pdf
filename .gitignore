@@ -1,0 +1,11 @@
+node_modules/
+dist/
+data/
+output/
+*.pdf
+*.log
+*.db
+*.db-shm
+*.db-wal
+tsconfig.tsbuildinfo
+.playwright-mcp/

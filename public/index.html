@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محول Markdown إلى PDF - دعم RTL</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/themes.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <div class="header-top">
+        <div class="header-links">
+          <a href="/docs" class="btn btn-header">📚 توثيق API</a>
+          <a href="/history" class="btn btn-header">📋 السجلات</a>
+        </div>
+        <button id="authBtn" class="btn btn-header" onclick="toggleAuthModal()">
+          🔑 تسجيل الدخول
+        </button>
+      </div>
+      <h1>📄 محول Markdown إلى PDF</h1>
+      <p class="subtitle">مع دعم كامل للغة العربية والاتجاه من اليمين لليسار</p>
+    </header>
+
+    <div id="authModal" class="modal" hidden>
+      <div class="modal-content">
+        <button class="modal-close" onclick="closeAuthModal()">✕</button>
+
+        <div class="auth-tabs">
+          <button class="auth-tab active" data-tab="login">تسجيل الدخول</button>
+          <button class="auth-tab" data-tab="register">إنشاء حساب</button>
+        </div>
+
+        <form id="loginForm" class="auth-form">
+          <input type="email" placeholder="البريد الإلكتروني" required>
+          <input type="password" placeholder="كلمة المرور" required>
+          <button type="submit" class="btn btn-primary btn-large">دخول</button>
+        </form>
+
+        <form id="registerForm" class="auth-form" hidden>
+          <input type="text" placeholder="اسم المستخدم" required>
+          <input type="email" placeholder="البريد الإلكتروني" required>
+          <input type="password" placeholder="كلمة المرور (6 أحرف+)" required minlength="6">
+          <button type="submit" class="btn btn-success btn-large">إنشاء حساب</button>
+        </form>
+
+        <div class="auth-divider">أو</div>
+
+        <button class="btn btn-secondary btn-large" onclick="continueAsGuest()">
+          👤 المتابعة كضيف
+        </button>
+        <p class="guest-note">
+          سيتم حفظ سجلاتك على المتصفح فقط. لن تُحذف إلا إذا طلبت ذلك.
+        </p>
+      </div>
+    </div>
+
+    <div class="main-content">
+      <div class="input-section">
+        <div class="section-header">
+          <h2>✍️ الإدخال</h2>
+          <div class="actions">
+            <button id="clearBtn" class="btn btn-secondary">🗑️ مسح</button>
+            <button id="loadSampleBtn" class="btn btn-secondary">📝 نموذج</button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="write">كتابة نص</button>
+          <button class="tab-btn" data-tab="upload">رفع ملف</button>
+        </div>
+
+        <div id="writeTab" class="tab-content active">
+          <textarea
+            id="markdownInput"
+            placeholder="اكتب نص Markdown هنا... أو الصق محتوى ملف .md"
+            dir="rtl"
+          ></textarea>
+        </div>
+
+        <div id="uploadTab" class="tab-content">
+          <div class="upload-area">
+            <input type="file" id="fileInput" accept=".md,.markdown,.txt" hidden>
+            <button id="selectFileBtn" class="btn btn-primary">📁 اختيار ملف</button>
+            <p class="upload-hint">أو اسحب ملف Markdown هنا</p>
+          </div>
+        </div>
+
+        <div class="filename-input">
+          <label for="filename">اسم الملف الناتج:</label>
+          <input
+            type="text"
+            id="filename"
+            value="مستندي"
+            placeholder="اسم الملف"
+            dir="rtl"
+          >
+        </div>
+      </div>
+
+      <div class="preview-section">
+        <div class="section-header">
+          <h2>👁️ المعاينة</h2>
+          <div class="actions">
+            <div class="theme-picker">
+              <span class="theme-picker-label">🎨</span>
+              <button class="theme-dot active" data-theme="blue" title="أزرق"></button>
+              <button class="theme-dot" data-theme="red" title="أحمر"></button>
+              <button class="theme-dot" data-theme="green" title="أخضر"></button>
+              <button class="theme-dot" data-theme="purple" title="بنفسجي"></button>
+              <button class="theme-dot" data-theme="gold" title="ذهبي"></button>
+            </div>
+            <button id="previewBtn" class="btn btn-accent">🔄 تحديث المعاينة</button>
+          </div>
+        </div>
+
+        <div id="preview" class="preview-content">
+          <div class="placeholder">
+            <p>👆 اكتب نص Markdown أو ارفع ملف لرؤية المعاينة</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="export-section">
+      <button id="convertBtn" class="btn btn-success btn-large">
+        📥 تحويل إلى PDF
+      </button>
+      <span id="statusMessage" class="status-message"></span>
+    </div>
+
+    <div class="bottom-nav">
+      <a href="/docs" class="btn btn-accent btn-large">📚 استكشف توثيق API الكامل</a>
+    </div>
+
+    <div class="help-section">
+      <details>
+        <summary>💡 دليل Markdown السريع</summary>
+        <div class="help-content">
+          <h3>تنسيقات أساسية:</h3>
+          <ul>
+            <li><code># عنوان 1</code> - عنوان كبير</li>
+            <li><code>## عنوان 2</code> - عنوان متوسط</li>
+            <li><code>**نص عريض**</code> - <b>نص عريض</b></li>
+            <li><code>*نص مائل*</code> - <i>نص مائل</i></li>
+            <li><code>- عنصر في القائمة</code> - قائمة نقطية</li>
+            <li><code>[رابط](URL)</code> - رابط</li>
+            <li><code>`كود`</code> - كود مضمن</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/themes.js"></script>
+  <script src="/js/app.js"></script>
+</body>
+</html>

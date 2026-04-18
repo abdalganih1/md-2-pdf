@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>توثيق API - MD-2-PDF</title>
+  <link rel="stylesheet" href="/css/docs.css">
+</head>
+<body>
+  <div class="docs-container">
+    <aside class="docs-sidebar">
+      <div class="sidebar-title">MD-2-PDF</div>
+
+      <div class="sidebar-section">عام</div>
+      <a href="#overview" class="active">نظرة عامة</a>
+      <a href="#auth">المصادقة</a>
+
+      <div class="sidebar-section">API</div>
+      <a href="#health">GET /api/health</a>
+      <a href="#convert">POST /api/convert</a>
+      <a href="#convert-base64">POST /api/convert/base64</a>
+      <a href="#convert-file">POST /api/convert/file</a>
+      <a href="#parse">POST /api/parse</a>
+      <a href="#history-api">GET /api/history</a>
+
+      <div class="sidebar-section">أدوات MCP</div>
+      <a href="#mcp-tools">أدوات MCP</a>
+      <a href="#mcp-agents">التشغيل عبر الأدوات</a>
+
+      <div style="margin-top: 30px; padding: 0 16px;">
+        <a href="/" style="background: rgba(100,255,218,0.15); color: #64ffda; text-align: center;">العودة للرئيسية</a>
+      </div>
+    </aside>
+
+    <main class="docs-main">
+      <h1>توثيق API - MD-2-PDF v2.0</h1>
+
+      <section id="overview">
+        <h2>نظرة عامة</h2>
+        <p>MD-2-PDF هي أداة لتحويل نصوص Markdown إلى ملفات PDF مع دعم كامل للغة العربية (RTL).</p>
+        <p><strong>الرابط الأساسي:</strong> <code>http://localhost:3000/api</code></p>
+        <p><strong>تنسيق الطلبات:</strong> JSON مع <code>Content-Type: application/json</code></p>
+      </section>
+
+      <section id="auth">
+        <h2>المصادقة</h2>
+        <p>معظم نقاط النهاية تعمل بدون مصادقة. لحفظ السجلات، يمكنك:</p>
+        <ul>
+          <li><strong>تسجيل الدخول:</strong> إرسال JWT token عبر <code>Authorization: Bearer &lt;token&gt;</code></li>
+          <li><strong>ضيف:</strong> إرسال معرف الجلسة عبر <code>X-Guest-Session: &lt;id&gt;</code></li>
+        </ul>
+      </section>
+
+      <section id="health">
+        <h2>GET /api/health <span class="endpoint-badge get">GET</span></h2>
+        <p>فحص صحة الخادم والتحقق من أنه يعمل.</p>
+
+        <h3>مثال الطلب</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+          <pre><code>curl http://localhost:3000/api/health</code></pre>
+        </div>
+
+        <h3>مثال الاستجابة</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+          <pre><code>{
+  "status": "ok",
+  "service": "md-2-pdf",
+  "version": "2.0.0",
+  "timestamp": "2026-01-01T00:00:00.000Z"
+}</code></pre>
+        </div>
+
+        <button class="try-btn" onclick="tryEndpoint(this, 'GET', '/api/health')">🧪 جرّب الآن</button>
+        <div class="try-result"><pre></pre></div>
+      </section>
+
+      <section id="convert">
+        <h2>POST /api/convert <span class="endpoint-badge post">POST</span></h2>
+        <p>تحويل نص Markdown إلى ملف PDF. يعيد الملف مباشرة كـ <code>application/pdf</code>.</p>
+
+        <h3>المعاملات</h3>
+        <table class="params-table">
+          <thead>
+            <tr><th>المعامل</th><th>النوع</th><th>مطلوب</th><th>الوصف</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>markdown</code></td><td>string</td><td>نعم</td><td>نص Markdown للتحويل (حتى 5MB)</td></tr>
+            <tr><td><code>options.title</code></td><td>string</td><td>لا</td><td>عنوان المستند</td></tr>
+            <tr><td><code>options.pageSize</code></td><td>string</td><td>لا</td><td>A4 | Letter | Legal (افتراضي: A4)</td></tr>
+            <tr><td><code>options.orientation</code></td><td>string</td><td>لا</td><td>portrait | landscape</td></tr>
+            <tr><td><code>options.css</code></td><td>string</td><td>لا</td><td>CSS مخصص يُحقن في PDF</td></tr>
+            <tr><td><code>options.fontSize</code></td><td>number</td><td>لا</td><td>حجم الخط (افتراضي: 14)</td></tr>
+            <tr><td><code>options.fontFamily</code></td><td>string</td><td>لا</td><td>عائلة الخط</td></tr>
+            <tr><td><code>options.theme</code></td><td>string</td><td>لا</td><td>اسم الثيم (blue, red, green, purple, gold)</td></tr>
+          </tbody>
+        </table>
+
+        <h3>مثال الطلب</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+          <pre><code>curl -X POST http://localhost:3000/api/convert \
+  -H "Content-Type: application/json" \
+  -d '{"markdown": "# مرحباً بالعالم\nهذا **نص** تجريبي.", "options": {"title": "مستندي"}}' \
+  --output output.pdf</code></pre>
+        </div>
+
+        <button class="try-btn" onclick="tryEndpoint(this, 'POST', '/api/convert', {markdown: '# مرحباً\nهذا **نص** تجريبي.', options: {title: 'مستند تجريبي'}})">🧪 جرّب الآن</button>
+        <div class="try-result"><pre></pre></div>
+      </section>
+
+      <section id="convert-base64">
+        <h2>POST /api/convert/base64 <span class="endpoint-badge post">POST</span></h2>
+        <p>تحويل Markdown إلى PDF مع إرجاعه كـ base64 في JSON.</p>
+
+        <h3>مثال الاستجابة</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+          <pre><code>{
+  "success": true,
+  "message": "Conversion successful",
+  "metadata": { "title": "...", "createdAt": "..." },
+  "pdfBase64": "JVBERi0xLjQK..."
+}</code></pre>
+        </div>
+
+        <button class="try-btn" onclick="tryEndpoint(this, 'POST', '/api/convert/base64', {markdown: '# Test', options: {title: 'Test'}})">🧪 جرّب الآن</button>
+        <div class="try-result"><pre></pre></div>
+      </section>
+
+      <section id="convert-file">
+        <h2>POST /api/convert/file <span class="endpoint-badge post">POST</span></h2>
+        <p>تحويل Markdown وحفظ PDF على الخادم. يُعيد مسار الملف المحفوظ.</p>
+
+        <h3>المعاملات الإضافية</h3>
+        <table class="params-table">
+          <thead>
+            <tr><th>المعامل</th><th>النوع</th><th>الوصف</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>outputPath</code></td><td>string</td><td>مسار حفظ الملف (اختياري)</td></tr>
+          </tbody>
+        </table>
+
+        <h3>مثال الاستجابة</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+          <pre><code>{
+  "success": true,
+  "message": "PDF saved successfully",
+  "outputPath": "/path/to/output/doc-xxx.pdf"
+}</code></pre>
+        </div>
+
+        <button class="try-btn" onclick="tryEndpoint(this, 'POST', '/api/convert/file', {markdown: '# File Test'})">🧪 جرّب الآن</button>
+        <div class="try-result"><pre></pre></div>
+      </section>
+
+      <section id="parse">
+        <h2>POST /api/parse <span class="endpoint-badge post">POST</span></h2>
+        <p>تحليل Markdown واستخراج البيانات الوصفية مع معاينة HTML.</p>
+
+        <h3>مثال الطلب</h3>
+        <div class="code-block">
+          <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+          <pre><code>curl -X POST http://localhost:3000/api/parse \
+  -H "Content-Type: application/json" \
+  -d '{"markdown": "---\ntitle: مستندي\nauthor: أحمد\n---\n# مرحباً"}'</code></pre>
+        </div>
+
+        <button class="try-btn" onclick="tryEndpoint(this, 'POST', '/api/parse', {markdown: '---\ntitle: Test\n---\n# Hello\n\nSome **bold** text.'})">🧪 جرّب الآن</button>
+        <div class="try-result"><pre></pre></div>
+      </section>
+
+      <section id="history-api">
+        <h2>GET /api/history <span class="endpoint-badge get">GET</span></h2>
+        <p>جلب سجلات المستندات المحفوظة. يتطلب مصادقة (JWT أو Guest Session).</p>
+
+        <h3>المعاملات (Query)</h3>
+        <table class="params-table">
+          <thead>
+            <tr><th>المعامل</th><th>النوع</th><th>الوصف</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>limit</code></td><td>number</td><td>عدد النتائج (افتراضي: 50)</td></tr>
+            <tr><td><code>offset</code></td><td>number</td><td>بداية النتائج</td></tr>
+            <tr><td><code>search</code></td><td>string</td><td>بحث في العناوين</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="mcp-tools">
+        <h2>أدوات MCP المتاحة</h2>
+        <p>خادم MCP يوفر الأدوات التالية للذكاء الاصطناعي:</p>
+
+        <table class="params-table">
+          <thead>
+            <tr><th>الأداة</th><th>الوصف</th></tr>
+          </thead>
+          <tbody>
+            <tr><td><code>convert-markdown-to-pdf</code></td><td>تحويل نص Markdown إلى PDF</td></tr>
+            <tr><td><code>convert-markdown-file-to-pdf</code></td><td>تحويل ملف Markdown إلى PDF</td></tr>
+            <tr><td><code>parse-markdown-metadata</code></td><td>استخراج البيانات الوصفية من Markdown</td></tr>
+          </tbody>
+        </table>
+      </section>
+
+      <section id="mcp-agents">
+        <h2>التشغيل عبر أدوات الذكاء الاصطناعي</h2>
+        <p>إعدادات MCP الجاهزة لكل أداة. انسخ الإعداد المناسب وأضفه لملف إعدادات الأداة.</p>
+
+        <div class="mcp-card antigravity">
+          <h3><span class="mcp-icon" style="background:#9b59b6">A</span> Antigravity (Gemini CLI)</h3>
+          <div class="config-path">~/.gemini/settings.json</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+            <pre><code>{
+  "mcpServers": {
+    "md-2-pdf": {
+      "command": "node",
+      "args": ["C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js"]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="mcp-card claude">
+          <h3><span class="mcp-icon" style="background:#3498db">C</span> Claude Code</h3>
+          <div class="config-path">سطر الأوامر أو ~/.config/claude/mcp.json</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+            <pre><code># عبر الأمر
+claude mcp add md-2-pdf -- node C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js
+
+# أو في ملف الإعدادات ~/.config/claude/mcp.json
+{
+  "mcpServers": {
+    "md-2-pdf": {
+      "command": "node",
+      "args": ["C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js"]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="mcp-card gemini">
+          <h3><span class="mcp-icon" style="background:#27ae60">G</span> Gemini CLI</h3>
+          <div class="config-path">~/.gemini/settings.json</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+            <pre><code>{
+  "mcpServers": {
+    "md-2-pdf": {
+      "command": "node",
+      "args": ["C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js"]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="mcp-card kilo">
+          <h3><span class="mcp-icon" style="background:#f39c12">K</span> Kilo Code</h3>
+          <div class="config-path">~/.config/kilo/kilo.jsonc</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+            <pre><code>{
+  "mcp": {
+    "md-2-pdf": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js"]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="mcp-card openclaw">
+          <h3><span class="mcp-icon" style="background:#e74c3c">O</span> OpenClaw / OpenCode</h3>
+          <div class="config-path">~/.config/opencode/opencode.jsonc</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+            <pre><code>{
+  "mcp": {
+    "md-2-pdf": {
+      "type": "stdio",
+      "command": "node",
+      "args": ["C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js"]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="mcp-card codex">
+          <h3><span class="mcp-icon" style="background:#95a5a6">X</span> Codex (OpenAI)</h3>
+          <div class="config-path">~/.codex/config.toml</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+            <pre><code>[mcp_servers.md-2-pdf]
+command = "node"
+args = ["C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js"]</code></pre>
+          </div>
+        </div>
+
+        <div class="mcp-card qwen">
+          <h3><span class="mcp-icon" style="background:#8b4513">Q</span> Qwen CLI</h3>
+          <div class="config-path">~/.qwen/mcp_config.json</div>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+            <pre><code>{
+  "mcpServers": {
+    "md-2-pdf": {
+      "command": "node",
+      "args": ["C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js"]
+    }
+  }
+}</code></pre>
+          </div>
+        </div>
+
+        <div class="mcp-card generic">
+          <h3><span class="mcp-icon" style="background:#34495e">*</span> أي أداة MCP أخرى</h3>
+          <div class="code-block">
+            <button class="copy-btn" onclick="copyCode(this)">نسخ</button>
+            <pre><code>{
+  "command": "node",
+  "args": ["C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js"],
+  "transport": "stdio"
+}</code></pre>
+          </div>
+        </div>
+
+        <div style="margin-top: 30px; padding: 16px; background: #fff8e1; border-radius: 8px; border-right: 4px solid #f39c12;">
+          <p style="color: #856404; margin: 0;"><strong>ملاحظة:</strong> عدّل المسار <code>C:/Users/Abdalgani/Desktop/myapp/md-2-pdf/dist/mcp/server.js</code> حسب موقع المشروع على جهازك.</p>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="/js/docs.js"></script>
+</body>
+</html>

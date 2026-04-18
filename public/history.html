@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>السجلات - MD-2-PDF</title>
+  <link rel="stylesheet" href="/css/style.css">
+  <link rel="stylesheet" href="/css/themes.css">
+  <style>
+    .history-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 20px;
+    }
+    .history-header h1 {
+      font-size: 1.8em;
+      color: var(--primary-color);
+    }
+    .back-link {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      padding: 8px 16px;
+      background: var(--primary-color);
+      color: white;
+      text-decoration: none;
+      border-radius: 6px;
+      transition: all 0.3s;
+    }
+    .back-link:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+    }
+    .stats-row {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 15px;
+      margin-bottom: 25px;
+    }
+    .stat-card {
+      background: var(--surface);
+      padding: 20px;
+      border-radius: 10px;
+      box-shadow: var(--shadow);
+      text-align: center;
+    }
+    .stat-number {
+      display: block;
+      font-size: 1.8em;
+      font-weight: 700;
+      color: var(--primary-color);
+    }
+    .stat-label {
+      color: var(--text-secondary);
+      font-size: 0.9em;
+      margin-top: 5px;
+    }
+    .search-box {
+      margin-bottom: 20px;
+    }
+    .search-box input {
+      width: 100%;
+      padding: 12px 16px;
+      border: 2px solid var(--border-color);
+      border-radius: 8px;
+      font-size: 1em;
+      font-family: inherit;
+      direction: rtl;
+    }
+    .search-box input:focus {
+      outline: none;
+      border-color: var(--primary-color);
+    }
+    .history-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: var(--surface);
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+    .history-table th {
+      background: var(--primary-color);
+      color: white;
+      padding: 14px 16px;
+      text-align: right;
+      font-weight: 600;
+    }
+    .history-table td {
+      padding: 12px 16px;
+      border-bottom: 1px solid var(--border-color);
+    }
+    .history-table tr:nth-child(even) {
+      background: var(--background);
+    }
+    .history-table tr:hover {
+      background: rgba(52, 152, 219, 0.05);
+    }
+    .actions-cell {
+      display: flex;
+      gap: 8px;
+    }
+    .btn-sm {
+      padding: 6px 12px;
+      font-size: 0.85em;
+    }
+    .btn-danger {
+      background-color: #e74c3c;
+      color: white;
+    }
+    .theme-badge {
+      display: inline-block;
+      padding: 3px 10px;
+      border-radius: 12px;
+      font-size: 0.8em;
+      font-weight: 600;
+    }
+    .theme-blue   { background: #ebf5fb; color: #2980b9; }
+    .theme-red    { background: #fdedec; color: #c0392b; }
+    .theme-green  { background: #eafaf1; color: #1e8449; }
+    .theme-purple { background: #f5eef8; color: #7d3c98; }
+    .theme-gold   { background: #fef9e7; color: #d68910; }
+    .empty-state {
+      text-align: center;
+      padding: 60px 20px;
+      background: var(--surface);
+      border-radius: 12px;
+      box-shadow: var(--shadow);
+    }
+    .empty-state p {
+      font-size: 1.2em;
+      color: var(--text-secondary);
+      margin-bottom: 20px;
+    }
+    .empty-state .btn {
+      display: inline-block;
+      text-decoration: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="history-header">
+      <h1>📋 سجلات المستندات</h1>
+      <a href="/" class="back-link">العودة للرئيسية</a>
+    </div>
+
+    <div id="statsContainer" class="stats-row"></div>
+
+    <div class="search-box">
+      <input
+        type="text"
+        id="searchInput"
+        placeholder="بحث في السجلات..."
+        dir="rtl"
+      >
+    </div>
+
+    <div id="historyContainer">
+      <div class="empty-state">
+        <p>جاري التحميل...</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="/js/auth.js"></script>
+  <script src="/js/history.js"></script>
+</body>
+</html>

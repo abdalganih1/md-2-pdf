@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>محول Markdown إلى PDF - دعم RTL</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="container">
+    <header class="header">
+      <h1>📄 محول Markdown إلى PDF</h1>
+      <p class="subtitle">مع دعم كامل للغة العربية والاتجاه من اليمين لليسار</p>
+    </header>
+
+    <div class="main-content">
+      <!-- قسم الإدخال -->
+      <div class="input-section">
+        <div class="section-header">
+          <h2>✍️ الإدخال</h2>
+          <div class="actions">
+            <button id="clearBtn" class="btn btn-secondary">🗑️ مسح</button>
+            <button id="loadSampleBtn" class="btn btn-secondary">📝 نموذج</button>
+          </div>
+        </div>
+
+        <div class="tabs">
+          <button class="tab-btn active" data-tab="write">كتابة نص</button>
+          <button class="tab-btn" data-tab="upload">رفع ملف</button>
+        </div>
+
+        <div id="writeTab" class="tab-content active">
+          <textarea 
+            id="markdownInput" 
+            placeholder="اكتب نص Markdown هنا... أو الصق محتوى ملف .md"
+            dir="rtl"
+          ></textarea>
+        </div>
+
+        <div id="uploadTab" class="tab-content">
+          <div class="upload-area">
+            <input type="file" id="fileInput" accept=".md,.markdown,.txt" hidden>
+            <button id="selectFileBtn" class="btn btn-primary">📁 اختيار ملف</button>
+            <p class="upload-hint">أو اسحب ملف Markdown هنا</p>
+          </div>
+        </div>
+
+        <div class="filename-input">
+          <label for="filename">اسم الملف الناتج:</label>
+          <input 
+            type="text" 
+            id="filename" 
+            value="مستندي" 
+            placeholder="اسم الملف"
+            dir="rtl"
+          >
+        </div>
+      </div>
+
+      <!-- قسم المعاينة -->
+      <div class="preview-section">
+        <div class="section-header">
+          <h2>👁️ المعاينة</h2>
+          <div class="actions">
+            <button id="previewBtn" class="btn btn-accent">🔄 تحديث المعاينة</button>
+          </div>
+        </div>
+
+        <div id="preview" class="preview-content">
+          <div class="placeholder">
+            <p>👆 اكتب نص Markdown أو ارفع ملف لرؤية المعاينة</p>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- قسم التصدير -->
+    <div class="export-section">
+      <button id="convertBtn" class="btn btn-success btn-large">
+        📥 تحويل إلى PDF
+      </button>
+      <span id="statusMessage" class="status-message"></span>
+    </div>
+
+    <!-- قسم المساعدة -->
+    <div class="help-section">
+      <details>
+        <summary>💡 دليل Markdown السريع</summary>
+        <div class="help-content">
+          <h3>تنسيقات أساسية:</h3>
+          <ul>
+            <li><code># عنوان 1</code> - عنوان كبير</li>
+            <li><code>## عنوان 2</code> - عنوان متوسط</li>
+            <li><code>**نص عريض**</code> - <b>نص عريض</b></li>
+            <li><code>*نص مائل*</code> - <i>نص مائل</i></li>
+            <li><code>- عنصر في القائمة</code> - قائمة نقطية</li>
+            <li><code>[رابط](URL)</code> - رابط</li>
+            <li><code>`كود`</code> - كود مضمن</li>
+          </ul>
+        </div>
+      </details>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>
