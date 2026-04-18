@@ -37,9 +37,42 @@ function updateActiveDot(theme) {
 
 function updatePreviewTheme(theme) {
   const preview = document.getElementById("preview");
-  if (preview) {
-    preview.setAttribute("data-theme", theme);
-  }
+  if (!preview) return;
+
+  preview.setAttribute("data-theme", theme);
+
+  const themes = {
+    blue:   { primary: "#3498db", light: "#ebf5fb", hover: "#d6eaf8" },
+    red:    { primary: "#e74c3c", light: "#fdedec", hover: "#fadbd8" },
+    green:  { primary: "#27ae60", light: "#eafaf1", hover: "#d5f5e3" },
+    purple: { primary: "#9b59b6", light: "#f5eef8", hover: "#ebdef0" },
+    gold:   { primary: "#f39c12", light: "#fef9e7", hover: "#fdebd0" },
+  };
+
+  const t = themes[theme] || themes.blue;
+
+  // Remove old override
+  const old = document.getElementById("theme-preview-override");
+  if (old) old.remove();
+
+  // Inject override styles with !important to beat embedded converter styles
+  const style = document.createElement("style");
+  style.id = "theme-preview-override";
+  style.textContent = `
+    :root { --primary: ${t.primary} !important; }
+    #preview th { background: ${t.primary} !important; color: #fff !important; }
+    #preview tr:nth-child(even) { background: ${t.light} !important; }
+    #preview tr:hover { background: ${t.hover} !important; }
+    #preview h1 { border-bottom-color: ${t.primary} !important; color: ${t.primary} !important; }
+    #preview h2, #preview h3 { color: ${t.primary} !important; }
+    #preview blockquote { border-right-color: ${t.primary} !important; background: ${t.light} !important; }
+    #preview a { color: ${t.primary} !important; }
+    #preview hr { background: linear-gradient(to left, transparent, ${t.primary}, transparent) !important; }
+    #preview .cover-page h1 { color: ${t.primary} !important; }
+    #preview .cover-page .divider { background: ${t.primary} !important; }
+    #preview code:not(pre code) { background: ${t.light} !important; color: ${t.primary} !important; }
+  `;
+  document.head.appendChild(style);
 }
 
 function getThemeCss(theme) {
